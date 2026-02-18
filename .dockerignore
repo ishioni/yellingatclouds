@@ -1,0 +1,9 @@
+# ignore dirs
+.github/
+
+# ignore dotfiles & config
+.*
+/*.yaml
+
+# include .gitignore'd things
+!.git/

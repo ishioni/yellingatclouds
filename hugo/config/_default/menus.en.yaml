@@ -1,0 +1,22 @@
+---
+main:
+  - identifier: blog
+    name: Blog
+    pageRef: /blog
+    weight: 1
+  - name: Search
+    weight: 40
+    params:
+      type: search
+  - name: GitHub
+    weight: 50
+    url: "https://github.com/ishioni/yellingatclouds"
+    params:
+      icon: github
+# footer:
+# - name: Terms
+#   pageRef: /terms
+#   weight: 10
+# - name: Privacy
+#   pageRef: /privacy
+#   weight: 20

@@ -1,0 +1,96 @@
+---
+# Sample workflow for building and deploying a Hugo site to GitHub Pages
+name: Build Hugo container image
+
+on: # yamllint disable-line rule:truthy
+  # pull_request: # Runs on PRs into the default branch on specified paths
+  #   branches: ["main"]
+  #   paths: ["content/**", "assets/**", "config/**", "layouts/**", "static/**"]
+  push: # Runs on pushes targeting the default branch; merged PRs result in pushes
+    branches: ["master"]
+    paths: ["hugo/**"] #, "content/**", "assets/**", "config/**", "layouts/**", "static/**"]
+  workflow_dispatch: # Allows you to run this workflow manually from the Actions tab
+
+# yamllint disable rule:colons
+env: # define 'static' vars here
+  platforms: "linux/amd64,linux/arm64"
+# yamllint enable
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: read
+      packages: write
+    steps:
+      # https://stackoverflow.com/questions/70483902/how-to-actually-clean-up-the-repository-on-self-hosted-runner-after-github-actio
+      - name: Cleanup build folder
+        shell: bash
+        run: |
+          cd ${{ github.workspace }}
+          ls -la ./
+          rm -rf ./* || true
+          rm -rf ./.??* || true
+          ls -la ./
+
+      - name: Checkout Repo
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
+
+      - name: Get build metadata
+        id: build-meta
+        shell: bash
+        run: |
+          BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          VCS_REF=$(git rev-parse HEAD)
+          echo "BUILD_DATE: ${BUILD_DATE}"
+          echo "VCS_REF: ${VCS_REF}"
+          echo "build-date=${BUILD_DATE}" >> $GITHUB_OUTPUT
+          echo "vcs-ref=${VCS_REF}" >> $GITHUB_OUTPUT
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            # set date tag for versioning and 'latest' tag
+            type=raw,value={{date 'YYYY.MM.DDHHmm' tz='Europe/Warsaw'}},priority=1000
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }} # ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          # logout: false
+
+      ### https://github.com/docker/build-push-action
+      ### https://github.com/docker/buildx/blob/master/docs/reference/buildx_build.md
+      - name: Build image
+        id: build
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          platforms: ${{ env.platforms }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            BUILD_DATE=${{ steps.build-meta.outputs.build-date }}
+            VCS_REF=${{ steps.build-meta.outputs.vcs-ref }}
+          context: . # explicitly include checked-out context with .git/ dir
+          file: ./docker/Dockerfile
+          push: true
+          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta.outputs.tags }}

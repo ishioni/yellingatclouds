@@ -1,0 +1,66 @@
+---
+# theme settings
+author: "Ishioni"
+license:
+  '<a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">Yelling at Clouds © 2024-2025 by Piotr Maksymiuk
+  is licensed under CC BY-NC-4.0</a>'
+description: "In which I yell at clouds"
+keywords: "blog,sre,infrastructure,embedded"
+
+displayUpdatedDate: true
+dateFormat: "January 2, 2006"
+
+theme:
+  default: dark # system
+  displayToggle: true
+
+blog:
+  list:
+    displayTags: true
+    # date | lastmod | publishDate | title | weight
+    sortBy: date
+    sortOrder: desc # or "asc"
+    pagerSize: 20 # Posts per page
+
+# Math / diagram engines
+math:
+  # Global math toggle. If false, pages must set `math: true` in front matter to load KaTeX assets.
+  enable: false
+  engine: katex
+
+editURL:
+  enable: false
+  base: "https://github.com/ishioni/yellingatclouds/edit/main/content"
+
+page:
+  # full (100%), wide (90rem), normal (1280px)
+  width: &width wide
+navbar:
+  width: *width
+  displayTitle: true
+  displayLogo: true
+  logo:
+    path: images/baselogo.png
+    dark: images/baselogo.png
+    link: /
+    width: 50
+    height: 50
+footer:
+  width: *width
+  displayCopyright: true
+  displayPoweredBy: true
+
+search:
+  enable: true
+  type: flexsearch
+  flexsearch:
+    # index page by: content | summary | heading | title
+    index: content
+# comments:
+#   enable: false
+#   type: giscus
+#   giscus:
+#     repo: <repository>
+#     repoId: <repository ID>
+#     category: <category>
+#     categoryId: <category ID>
