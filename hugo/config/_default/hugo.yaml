@@ -1,0 +1,25 @@
+---
+title: Yelling at Clouds
+baseURL: https://blog.movishell.pl/
+copyright: '<a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC-4.0</a>'
+
+enableEmoji: true
+enableGitInfo: true
+enableInlineShortcodes: true
+enableRobotsTXT: false # use /static/robots.txt
+
+languageCode: en-us
+defaultContentLanguage: "en"
+timeZone: Europe/Warsaw
+
+outputs:
+  home: [HTML]
+  page: [HTML]
+  section: [HTML, RSS]
+
+module:
+  hugoVersion:
+    extended: true
+    min: "v0.155.0"
+  imports:
+    - path: github.com/imfing/hextra
