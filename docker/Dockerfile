@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM docker.io/hugomods/hugo:0.159.1@sha256:9adabca736765ff2320aeceae26388f9cabf356307adfac89f9403a2666fb5c3 AS build
+FROM --platform=$BUILDPLATFORM docker.io/hugomods/hugo:0.159.2@sha256:6068880c6d71da481db38a5b760ee5e75de5c96d499e66ea6c6d4f6bcbcfdf3b AS build
 
 # Set shell options for safety
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
