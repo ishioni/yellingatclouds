@@ -20,7 +20,6 @@
   dependencyDashboardTitle: "Renovate Dashboard 🤖",
   suppressNotifications: ["prEditedNotification", "prIgnoreNotification"],
   ignorePaths: ["/hugo/public/**", "/hugo/resources/**", "/hugo/themes/**"],
-  platformCommit: "enabled",
   packageRules: [
     {
       description: "Disable digest-only updates for docker images",
